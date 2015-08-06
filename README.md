@@ -1,10 +1,12 @@
 # wikiporter
 
-FIXME: description
+This project is meant to aid in transporting mediawiki data from one kind of
+input source, such as a bzipped xml file, into some output target, such as a
+database.
 
 ## Installation
 
-Download from http://example.com/FIXME.
+Download from https://github.com/futuro/wikiporter.
 
 ## Usage
 
@@ -24,13 +26,9 @@ FIXME: listing of options this app accepts.
 
 ...
 
-### Any Other Sections
-### That You Think
-### Might be Useful
-
 ## License
 
-Copyright © 2015 FIXME
+Copyright © 2015 Evan Niessen-Derry
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
