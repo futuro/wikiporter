@@ -23,3 +23,9 @@
     (when-let [reader (:reader component)]
       (.close reader))
     (assoc component :reader nil)))
+
+(defn new-reader [filepath]
+  (map->BZ2Reader {:filepath filepath}))
+
+(defn parse [reader]
+  (xml/parse (:reader reader)))
