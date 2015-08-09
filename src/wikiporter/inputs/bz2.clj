@@ -1,4 +1,4 @@
-(ns wikiporter.readers.bz2
+(ns wikiporter.inputs.bz2
   (:gen-class)
   (:require [com.stuartsierra.component :as component]
             [clojure.data.xml :as xml]
