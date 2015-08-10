@@ -1,4 +1,4 @@
-{:db
+{:hikaricp
  {:adapter            "postgresql"
   :auto-commit        true
   :connection-timeout 30000
