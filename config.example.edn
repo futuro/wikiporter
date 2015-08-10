@@ -1,0 +1,16 @@
+{:db
+ {:adapter            "postgresql"
+  :auto-commit        true
+  :connection-timeout 30000
+  :database-name      "database"
+  :idle-timeout       600000
+  :max-lifetime       1800000
+  :maximum-pool-size  10
+  :minimum-idle       10
+  :password           "password"
+  :pool-name          "db-pool"
+  :port-number        5432
+  :read-only          false
+  :server-name        "localhost"
+  :username           "username"
+  :validation-timeout 5000}}
