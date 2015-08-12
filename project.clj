@@ -11,7 +11,9 @@
                  [org.clojure/data.xml "0.0.8"]
                  [org.clojure/java.jdbc "0.4.1"]
                  [org.clojure/tools.cli "0.3.2"]
-                 [clj-time "0.10.0"]]
+                 [org.postgresql/postgresql "9.4-1201-jdbc41"]
+                 [clj-time "0.10.0"]
+                 [hikari-cp "1.2.4"]]
   :main ^:skip-aot wikiporter.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
