@@ -20,9 +20,17 @@ FIXME: listing of options this app accepts.
 
 ## Examples
 
-...
+See repl-example.clj for usage examples from the repl.
 
 ### Todo
+
+* Create a cli frontend for wikiporter
+
+* Move the xml->map functionality into the filters file. While the
+  current functionality benefits me, as my current target app only
+  needs a very shallow clone of every page, ultimately I need
+  different kinds of filters, whatever they may be, to be swappable
+  based on needs.
 
 * To facilitate the easiest creation of new inputs and outputs, I
 suspect it will be useful to have an agreed upon schema for inputs,
