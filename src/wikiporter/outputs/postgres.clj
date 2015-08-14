@@ -12,10 +12,12 @@
    :server-name "localhost"})
 
 (defrecord PostgresDB [config]
+  "A Postgresql component with connection pooling."
   component/Lifecycle
   (start [component]
     (println ";; Creating database connection pool")
-    (let [datasrc (hcp/make-datasource (merge ds-config (:hikaricp config)))]
+    (let [datasrc (hcp/make-datasource
+                   (merge ds-config (:hikaricp config)))]
       (assoc component :datasrc datasrc)))
   (stop [component]
     (println ";; Closing database connection pool")
@@ -23,20 +25,27 @@
         (.close datasrc))
     (assoc component :datasrc nil)))
 
-(defn new-pool [config]
+(defn new-pool
+  "Create a new PostgresDB component"
+  [config]
   (map->PostgresDB {:config config}))
 
 (defn add-nil-redirects
+  "Add nil redirects to page maps which are missing a :redirect kv
+  pair."
   [pages]
   (map #(merge {:redirect nil} %) pages))
 
 (defn insert-maps
-  [db nestedmaps]
+  "Take in a collection of maps where the keys match column names in
+  the table passed in, inserting the values in their respective
+  columns."
+  [db table nestedmaps]
   (let [maps (add-nil-redirects nestedmaps)
         conn {:datasource (:datasrc db)}]
     (try
       (sql/execute! conn
-                    (-> (helpers/insert-into :pages)
+                    (-> (helpers/insert-into table)
                         (helpers/values maps)
                         honey/format))
       (catch Exception e

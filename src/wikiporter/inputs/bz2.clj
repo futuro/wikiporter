@@ -29,10 +29,11 @@
   (map->BZ2Reader {:filepath filepath}))
 
 (defn parse [reader]
+  "Given a streaming reader component, call xml/parse on it."
   (xml/parse (:reader reader)))
 
 (defn transform
-  "Convert the parsed content into a map"
+  "Pull the :content out of the parsed xml"
   [reader]
   (:content (parse reader)))
 
@@ -42,14 +43,15 @@
   (= (:tag element) tag-type))
 
 (defn is-page
-  "Return a boolean whether the map contains a page, i.e. whether :tag == :page"
+  "Return a boolean whether the element is a page, i.e. whether :tag
+  == :page"
   [element]
   (match-tag element :page))
 
 (defn only-pages
-  "Filter out maps that aren't pages"
-  [maps]
-  (filter is-page maps))
+  "Filter out elements that aren't pages"
+  [elements]
+  (filter is-page elements))
 
 ;; XML parsing logic; borrowed and adapted from the clojure version of
 ;; wikiparser
@@ -73,12 +75,14 @@
 
 ;; This returns a fn so we can place it inside a map for later use
 (defn get-in-attr
-  "Pull a value from inside an attributes map"
+  "Get a value from inside an attributes map"
   [attr]
   (fn [{attrs :attrs}]
     (get attrs attr)))
 
 (def revision-mapper
+  "A map of tag types to value converting functions for revision
+  elements"
   (comp
    (elem->map
     {:text text-mapper
@@ -87,6 +91,7 @@
    :content))
 
 (def page-mappers
+  "A map of tag types to value converting functions for page elements"
   {:title    text-mapper
    :ns       int-mapper
    :id       int-mapper
@@ -94,9 +99,12 @@
    :revision revision-mapper})
 
 (defn xml->maps
+  "Take xml elements and turn them into native data"
   [parsed]
   (map (comp (elem->map page-mappers) :content) parsed))
 
 (defn xml->pages
+  "Take xml elements, filter out elements that aren't pages, and turn
+  them into native data"
   [parsed]
   (xml->maps (only-pages parsed)))
