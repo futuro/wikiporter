@@ -32,6 +32,7 @@
 ;; suffice for now
 #_(out.psql/insert-maps
    (:output porter)
+   :pages
    (util/flatten-map
     ((:bz2 wikiporter.core/input-fns) (:input porter))
     "-"))
