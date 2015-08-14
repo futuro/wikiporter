@@ -4,6 +4,8 @@ This project is meant to aid in transporting mediawiki data from one kind of
 input source, such as a bzipped xml file, into some output target, such as a
 database.
 
+It is currently in the alpha stage of development. Contributions welcome!
+
 ## Installation
 
 Download from https://github.com/futuro/wikiporter.
