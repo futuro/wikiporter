@@ -12,7 +12,6 @@
    :server-name "localhost"})
 
 (defrecord PostgresDB [config]
-  "A Postgresql component with connection pooling."
   component/Lifecycle
   (start [component]
     (println ";; Creating database connection pool")
