@@ -3,6 +3,7 @@
   (:require [clojure.edn :as edn]
             [clojure.tools.cli :as cli]
             [clojure.pprint :as pp]
+            [clojure.string :as str]
             [com.stuartsierra.component :as component]
             [wikiporter.util :as util]
             [wikiporter.inputs.bz2 :as in.bz2]
@@ -36,7 +37,56 @@
     :input ((input-type inputs) input-uri)
     :output ((output-type outputs) config))))
 
+(defn str->keyword
+  "Turn a string into a keyword, stripping the first leading colon (:)
+  if it exists."
+  [string]
+  (keyword (str/replace-first string ":" "")))
+
+(def cli-options
+  [["-c" "--config config-path" "Path to the config file"
+    :default "config.edn"
+    :id :config-path]
+   ["-i" "--input InputKey" "Desired input type"
+    :default :bz2
+    :id :input
+    :parse-fn str->keyword]
+   ["-o" "--output OutputKey" "Desired output type"
+    :default :postgres
+    :id :output
+    :parse-fn str->keyword]
+   ["-h" "--help"]])
+
+(defn usage [options-summary]
+  (->> ["Usage: wikiporter [options]"
+        ""
+        "Options:"
+        options-summary
+        ""]
+       (str/join \newline)))
+
+(defn error-msg [errors]
+  (str "The following errors occurred while parsing your command:\n\n"
+       (str/join \newline errors)))
+
+
+(defn exit [status msg]
+  (println msg)
+  (System/exit status))
+
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Main entrance point from the command line"
+  ;; Note to self
+  ;; args is a list of the space delimited things passed on the cli
   [& args]
-  (println "Hello, World!"))
+  (let [{:keys [options arguments errors summary] :as opts} (cli/parse-opts args cli-options)]
+    ;; Handle help and error conditions
+    (cond
+      (:help options) (exit 0 (usage summary))
+      errors (exit 1 (error-msg errors)))
+    ;; Execute program with options
+    #_(case (first arguments)
+      "start" (server/start! options)
+      "stop" (server/stop! options)
+      "status" (server/status! options)
+      (exit 1 (usage summary)))))
