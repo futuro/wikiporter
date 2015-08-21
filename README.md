@@ -1,4 +1,4 @@
-# wikiporter
+# Wikiporter
 
 This project is meant to aid in transporting mediawiki data from one kind of
 input source, such as a bzipped xml file, into some output target, such as a
