@@ -6,13 +6,39 @@ database.
 
 It is currently in the alpha stage of development. Contributions welcome!
 
-## Installation
+## Current Limitations
 
-Download from https://github.com/futuro/wikiporter.
+While I've aimed to make Wikiporter easy to extend, my current use case only
+requires shallow imports of pages. This results in importing seven key/value
+pairs into a postgres database, those keys being title, ns, id, redirect,
+revision_timestamp, revision\_text, and revision\_format. The revision\_* keys
+come from the revision element inside of page elements, where I've flattened
+the keys.
+
+So, where as in the xml you would have something like
+```
+{:page
+ ({:title String
+  :revision
+   ({:id BigInt}
+    {:timestamp DateTime}
+    etc etc
+    )})}
+```
+you end up with a list of something like
+```
+({:title String
+ :revision-id BigInt
+ :revision-timestamp DateTime
+ etc etc})
+```
+
+If you have a different use case than this, please feel free to open an issue
+and/or a PR.
 
 ## Usage
 
-    $ java -jar wikiporter-0.1.0-standalone.jar [args]
+    $ lein run -- [args]
 
 ## Args
 
@@ -30,20 +56,8 @@ See repl-example.clj for usage examples from the repl.
 
 ### Todo
 
-* Move the xml->map functionality into the filters file. While the
-  current functionality benefits me, as my current target app only
-  needs a very shallow clone of every page, ultimately I need
-  different kinds of filters, whatever they may be, to be swappable
-  based on needs.
-
-* To facilitate the easiest creation of new inputs and outputs, I
-suspect it will be useful to have an agreed upon schema for inputs,
-thus allowing output writers to create code that works regardless of
-which input the user chooses. Since I have no idea how this will play
-out practically, I'll have to wait until I need a new input, a new
-output, or a differently structured output, such as a proper import of
-the whole Wiktionary/Wikipedia data-set instead of only keeping single
-revisions of each page.
+* Investigate the use of schema's for easier coordination between inputs and
+  outputs.
 
 ## License
 
