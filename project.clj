@@ -16,4 +16,7 @@
                  [hikari-cp "1.2.4"]]
   :main ^:skip-aot wikiporter.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all}
+             :dev {:dependencies [[org.clojure/tools.namespace "0.2.7"]
+                                  [reloaded.repl "0.1.0"]]
+                   :source-paths ["dev"]}})
