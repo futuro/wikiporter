@@ -30,8 +30,6 @@ See repl-example.clj for usage examples from the repl.
 
 ### Todo
 
-* Create a cli frontend for wikiporter
-
 * Move the xml->map functionality into the filters file. While the
   current functionality benefits me, as my current target app only
   needs a very shallow clone of every page, ultimately I need
