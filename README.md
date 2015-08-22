@@ -19,7 +19,7 @@ Download from https://github.com/futuro/wikiporter.
 ```
 -c --config <config-path> Path to the config file
 -i --input <input type> Currently only :bz2 is supported
--u --input-uri <uri> The URI to pass to the input component, e.g. wikisample.short.xml.b2
+-u --input-uri <uri> The URI to pass to the input component, e.g. wikisample.short.xml.bz2
 -o --output <output type> Currently only :postgres is supported
 -b --batch-size <batch size> The number of elements to parse at once, default 512
 ```
