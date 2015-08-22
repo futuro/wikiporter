@@ -34,5 +34,5 @@
    (:output porter)
    :pages
    (util/flatten-map
-    ((:bz2 wikiporter.core/input-fns) (:input porter))
-    "-"))
+    "-"
+    ((:bz2 wikiporter.core/input-fns) (:input porter))))

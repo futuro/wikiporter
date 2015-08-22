@@ -18,9 +18,9 @@
 ;; Adapted from
 ;; https://stackoverflow.com/questions/17901933/flattening-a-map-by-join-the-keys
 (defn flatten-map
-  ([nested-map separator]
-   (flatten-map nested-map separator nil))
-  ([nested-map separator pre]
+  ([separator nested-map]
+   (flatten-map separator nil nested-map))
+  ([separator pre nested-map]
    #_(apply merge
           (r/foldcat
            (r/flatten

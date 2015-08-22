@@ -9,6 +9,10 @@
             [wikiporter.inputs.bz2 :as in.bz2]
             [wikiporter.outputs.postgres :as out.psql]))
 
+(def porter-system
+  "The system var used from -main"
+  nil)
+
 (def inputs
   "Map of input types to component construction functions. Currently,
   every input component must take one argument, typically a uri
@@ -25,6 +29,10 @@
   from the config-path."
   {:postgres out.psql/new-pool})
 
+(def output-fns
+  "Map of output types to functions handling the parsed input data."
+  {:postgres out.psql/insert-maps})
+
 #_(def filter-fns
   {:content :content
    :identity identity
@@ -35,7 +43,19 @@
    (component/system-map
     :config-options config
     :input ((input-type inputs) input-uri)
-    :output ((output-type outputs) config))))
+    :input-fn (input-type input-fns)
+    :output ((output-type outputs) config)
+    :output-fn (output-type output-fns))))
+
+(defn start-system
+  "Start the passed in system var"
+  [sysvar]
+  (alter-var-root sysvar component/start))
+
+(defn stop-system
+  "Stop the passed in system var"
+  [sysvar]
+  (alter-var-root sysvar component/stop))
 
 (defn str->keyword
   "Turn a string into a keyword, stripping the first leading colon (:)
@@ -51,10 +71,17 @@
     :default :bz2
     :id :input
     :parse-fn str->keyword]
+   ["-u" "--input-uri URI" "The URI to pass to the input component"
+    :default nil
+    :id :inputuri]
    ["-o" "--output OutputKey" "Desired output type"
     :default :postgres
     :id :output
     :parse-fn str->keyword]
+   ["-b" "--batch-size batch-size" "Number of elements to parse at once"
+    :default 512
+    :id :batchsize
+    :parse-fn #(Integer/parseInt %)]
    ["-h" "--help"]])
 
 (defn usage [options-summary]
@@ -69,10 +96,22 @@
   (str "The following errors occurred while parsing your command:\n\n"
        (str/join \newline errors)))
 
+(defn exit
+  ([status]
+   (System/exit status))
+  ([status msg]
+   (println msg)
+   (System/exit status)))
 
-(defn exit [status msg]
-  (println msg)
-  (System/exit status))
+(defn port
+  "Transport data from the input to the output, going through whichever filters
+  are chosen for."
+  [{:keys [input input-fn output output-fn] :as sysmap} batch-size]
+  (dorun (pmap (fn [elems]
+                 (->> elems
+                      (util/flatten-map "-")
+                      (output-fn output :pages)))
+               (partition-all batch-size (input-fn input)))))
 
 (defn -main
   "Main entrance point from the command line"
@@ -85,8 +124,15 @@
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors)))
     ;; Execute program with options
-    #_(case (first arguments)
-      "start" (server/start! options)
-      "stop" (server/stop! options)
-      "status" (server/status! options)
-      (exit 1 (usage summary)))))
+    (let [input-type (:input options)
+          input-uri (:inputuri options)
+          output-type (:output options)
+          config-path (:config-path options)
+          batch-size (:batchsize options)]
+      (alter-var-root #'porter-system
+                      (constantly
+                       (system input-type input-uri output-type config-path)))
+      (start-system #'porter-system)
+      (port porter-system batch-size)
+      (stop-system #'porter-system)
+      (exit 0))))
